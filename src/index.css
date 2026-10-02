@@ -1,0 +1,213 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Radius scale — fixed steps, restrained (not excessive) per design direction */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+
+  /* Type scale — compact enterprise density */
+  --text-2xs: 0.6875rem; /* 11px — helper labels, table header */
+  --text-2xs--line-height: 1rem; /* 16px */
+  --text-xs: 0.75rem; /* 12px — buttons, table content */
+  --text-xs--line-height: 1rem; /* 16px */
+  --text-sm: 0.8125rem; /* 13px — standard body, nav */
+  --text-sm--line-height: 1.25rem; /* 20px */
+
+  /* Elevation scale — level 1 (containers) / 2 (hover) / 3 (popovers/drawers) */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-floating: 0 12px 32px rgba(15, 23, 42, 0.14), 0 4px 12px rgba(15, 23, 42, 0.08);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-helper: var(--helper);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+}
+
+:root {
+  --radius: 0.625rem;
+
+  /* Cool neutral app background, distinct from the white surfaces sitting on it */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* OSOS Design System — Theme Colors/Royal Blue, pulled from the OSOS Product
+     Suite Figma file. Primary is reserved for primary actions, selection and focus. */
+  --primary: #003366;
+  --primary-hover: #002448;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --helper: #64748b;
+  /* Generic hover/selected surface stays neutral — blue is reserved for primary
+     actions, selected nav/view and focus, not painted onto every hover state. */
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+
+  /* Semantic colors — OSOS Status pill colors (Active/Deleted/Warning/Completed),
+     dark enough to stay ≥4.5:1 as badge text on their own 10%-tint background */
+  --destructive: #d70400;
+  --destructive-foreground: #ffffff;
+  --success: #04961a;
+  --success-foreground: #ffffff;
+  --warning: #e08300;
+  --warning-foreground: #ffffff;
+  --info: #4267b2;
+  --info-foreground: #ffffff;
+
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --input: #e4e4e4;
+  --ring: #003366;
+
+  --surface-subtle: #f8fafc;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #5b8ec7;
+  --primary-hover: #7ba5d3;
+  --primary-foreground: oklch(0.145 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --helper: oklch(0.6 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: #ef5350;
+  --destructive-foreground: oklch(0.145 0 0);
+  --success: #4ade80;
+  --success-foreground: oklch(0.145 0 0);
+  --warning: #fb923c;
+  --warning-foreground: oklch(0.145 0 0);
+  --info: #7b93c9;
+  --info-foreground: oklch(0.145 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --border-strong: oklch(1 0 0 / 18%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #5b8ec7;
+  --surface-subtle: oklch(0.2 0 0);
+  --sidebar: oklch(0.18 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family:
+      "Poppins",
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ---- Motion system -------------------------------------------------------
+   Durations follow the fast/normal/slow scale from the design spec:
+   fast 120-160ms (hover/focus), normal 180-240ms (cards, view/content swap),
+   slow 250-320ms (drawers). Tailwind's own duration-150/200/300 utilities are
+   used directly in components for these — this file only holds the keyframe
+   primitives that aren't plain color/transform transitions. */
+@layer utilities {
+  .animate-fade-up {
+    animation: fade-up 220ms cubic-bezier(0, 0, 0.2, 1) both;
+  }
+  .animate-fade-up-sm {
+    animation: fade-up-sm 200ms cubic-bezier(0, 0, 0.2, 1) both;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up-sm {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect prefers-reduced-motion everywhere, without gating every component individually. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

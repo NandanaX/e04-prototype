@@ -13,6 +13,7 @@ import { ListSkeleton } from "@/components/opportunities/ListSkeleton"
 import { CardSkeleton } from "@/components/opportunities/CardSkeleton"
 import { KanbanSkeleton } from "@/components/opportunities/KanbanSkeleton"
 import { DropRejectionDialog, LostReasonDialog } from "@/components/opportunities/DropDialogs"
+import { CandidateProfilePage } from "@/components/opportunities/CandidateProfilePage"
 import { OpportunityDrawer } from "@/components/opportunities/OpportunityDrawer"
 import { OpportunityForm } from "@/components/opportunities/OpportunityForm"
 import { ConfirmDeleteDialog } from "@/components/opportunities/ConfirmDeleteDialog"
@@ -26,7 +27,7 @@ import { syncUrlFromState, useOpportunitiesStore } from "@/store/opportunities-s
 const INITIAL_LOAD_MS = 450
 
 function App() {
-  const { view, language, statusFilter, ownerFilter, priorityFilter, sortField, sortDir } =
+  const { view, language, statusFilter, ownerFilter, priorityFilter, sortField, sortDir, profileCandidateId } =
     useOpportunitiesStore()
   const [initialLoading, setInitialLoading] = useState(true)
 
@@ -54,40 +55,47 @@ function App() {
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <AppHeader />
-        <div className="animate-fade-up">
-          <PageHeader />
-        </div>
-        <div className="animate-fade-up" style={{ animationDelay: "40ms" }}>
-          <StatsCards />
-        </div>
 
-        <div className="flex flex-1 flex-col overflow-hidden p-6 pt-4">
-          <div
-            className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-card animate-fade-up"
-            style={{ animationDelay: "80ms" }}
-          >
-            <StatusTabs />
-            <Toolbar />
+        {profileCandidateId ? (
+          <CandidateProfilePage />
+        ) : (
+          <>
+            <div className="animate-fade-up">
+              <PageHeader />
+            </div>
+            <div className="animate-fade-up" style={{ animationDelay: "40ms" }}>
+              <StatsCards />
+            </div>
 
-            <main className="flex flex-1 flex-col overflow-hidden" aria-busy={initialLoading}>
-              {initialLoading ? (
-                <>
-                  {view === "list" && <ListSkeleton />}
-                  {view === "card" && <CardSkeleton />}
-                  {view === "kanban" && <KanbanSkeleton />}
-                </>
-              ) : (
-                <>
-                  {view === "list" && <ListView />}
-                  {view === "card" && <CardView />}
-                  {view === "kanban" && <KanbanView />}
-                </>
-              )}
-            </main>
+            <div className="flex flex-1 flex-col overflow-hidden p-6 pt-4">
+              <div
+                className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-card animate-fade-up"
+                style={{ animationDelay: "80ms" }}
+              >
+                <StatusTabs />
+                <Toolbar />
 
-            <SelectionBar />
-          </div>
-        </div>
+                <main className="flex flex-1 flex-col overflow-hidden" aria-busy={initialLoading}>
+                  {initialLoading ? (
+                    <>
+                      {view === "list" && <ListSkeleton />}
+                      {view === "card" && <CardSkeleton />}
+                      {view === "kanban" && <KanbanSkeleton />}
+                    </>
+                  ) : (
+                    <>
+                      {view === "list" && <ListView />}
+                      {view === "card" && <CardView />}
+                      {view === "kanban" && <KanbanView />}
+                    </>
+                  )}
+                </main>
+
+                <SelectionBar />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <DropRejectionDialog />

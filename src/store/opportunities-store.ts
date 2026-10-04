@@ -81,6 +81,8 @@ interface OpportunitiesState {
   savingIds: string[]
   openDrawerId: string | null
   formState: FormState | null
+  /** Set after "Save and Continue" on a new candidate — renders the full profile page instead of the list. */
+  profileCandidateId: string | null
   deleteConfirm: DeleteConfirm | null
   toasts: Toast[]
   bulkResult: BulkResult | null
@@ -110,6 +112,8 @@ interface OpportunitiesState {
   openCreateForm: (prefillStage?: Stage) => void
   openEditForm: (id: string) => void
   closeForm: () => void
+  openCandidateProfile: (id: string) => void
+  closeCandidateProfile: () => void
 
   pushToast: (tone: Toast["tone"], message: string) => void
   dismissToast: (id: string) => void
@@ -130,7 +134,8 @@ interface OpportunitiesState {
   updateCloseDate: (id: string, closeDate: string) => void
   updateOpportunity: (id: string, patch: Partial<Opportunity>) => void
 
-  createOpportunity: (input: NewOpportunityInput) => Promise<boolean>
+  /** Returns the new candidate's id on success, or null if the write failed. */
+  createOpportunity: (input: NewOpportunityInput) => Promise<string | null>
   duplicateOpportunity: (id: string) => void
   deleteOpportunity: (id: string) => void
 
@@ -221,10 +226,10 @@ function stageIndex(stage: Stage) {
 
 function genId(existing: Opportunity[]): string {
   const max = existing.reduce((m, o) => {
-    const n = parseInt(o.id.replace("OPP-", ""), 10)
+    const n = parseInt(o.id.replace("CAND-", ""), 10)
     return Number.isFinite(n) ? Math.max(m, n) : m
   }, 0)
-  return `OPP-${String(max + 1).padStart(4, "0")}`
+  return `CAND-${String(max + 1).padStart(4, "0")}`
 }
 
 function initialsFromName(name: string): string {
@@ -245,27 +250,27 @@ type MoveOutcome =
 // The single business-rule source of truth for stage transitions — used by drag/drop,
 // the "Move to…" menu, and bulk stage-change alike, so validation never drifts between them.
 function validateStageMove(opp: Opportunity, toStage: Stage, lang: Language): MoveOutcome {
-  const fromClosed = opp.stage === "closed-won" || opp.stage === "closed-lost"
+  const fromClosed = opp.stage === "hired" || opp.stage === "rejected"
 
   if (fromClosed) {
     return {
       kind: "rejected",
       reason:
         lang === "ar"
-          ? "لا يمكن إعادة فتح صفقة مغلقة بالسحب. عدّل السجل مباشرة."
-          : "This opportunity is closed. Reopen it from the record — not by dragging.",
+          ? "لا يمكن إعادة فتح سجل مغلق بالسحب. عدّل السجل مباشرة."
+          : "This candidate's record is closed. Reopen it from the record — not by dragging.",
     }
   }
-  if (toStage === "closed-won" && opp.stage !== "negotiation") {
+  if (toStage === "hired" && opp.stage !== "offer-extended") {
     return {
       kind: "rejected",
       reason:
         lang === "ar"
-          ? "انقل الصفقة إلى \"التفاوض\" أولاً قبل إغلاقها كفوز."
-          : "Move it to Negotiation first — Closed-Won requires final terms to be agreed.",
+          ? "انقل المرشح إلى \"تم تقديم العرض\" أولاً قبل تعيينه."
+          : "Move it to Offer Extended first — Hired requires an accepted offer.",
     }
   }
-  if (toStage === "closed-lost") return { kind: "needs-reason" }
+  if (toStage === "rejected") return { kind: "needs-reason" }
   return { kind: "ok" }
 }
 
@@ -393,6 +398,7 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
   savingIds: [],
   openDrawerId: null,
   formState: null,
+  profileCandidateId: null,
   deleteConfirm: null,
   toasts: [],
   bulkResult: null,
@@ -459,6 +465,8 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
   openCreateForm: (prefillStage) => set({ formState: { mode: "create", prefillStage } }),
   openEditForm: (id) => set({ formState: { mode: "edit", editId: id } }),
   closeForm: () => set({ formState: null }),
+  openCandidateProfile: (id) => set({ profileCandidateId: id }),
+  closeCandidateProfile: () => set({ profileCandidateId: null }),
 
   pushToast: (tone, message) => {
     const id = `t${Date.now()}${Math.random().toString(36).slice(2, 6)}`
@@ -521,7 +529,7 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
     const ids = pending.oppIds
     set({ pendingLostConfirmation: null })
     applyOptimisticPatch(set, get, ids, {
-      stage: "closed-lost",
+      stage: "rejected",
       lostReason,
       lastActivityDate: "2026-09-08",
     }).then((failed) => reportOutcome(set, get, "stage", ids, [], failed, "", t(get().language).saveFailed))
@@ -613,7 +621,7 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
       probability: input.probability,
       closeDate: input.closeDate,
       lastActivityDate: "2026-09-08",
-      source: "inbound",
+      source: "job-board",
       priority: input.priority,
       nextStep: "—",
     }
@@ -625,14 +633,14 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
       await simulateWrite(true)
       set((state) => ({ savingIds: state.savingIds.filter((x) => x !== id) }))
       get().pushToast("success", t(get().language).opportunityCreated)
-      return true
+      return id
     } catch {
       set((state) => ({
         opportunities: state.opportunities.filter((o) => o.id !== id),
         savingIds: state.savingIds.filter((x) => x !== id),
       }))
       get().pushToast("error", t(get().language).createFailed)
-      return false
+      return null
     }
   },
 
@@ -773,9 +781,9 @@ export function selectVisibleOpportunities(state: OpportunitiesState): Opportuni
   if (state.priorityFilter !== "all") items = items.filter((o) => o.priority === state.priorityFilter)
   if (state.sourceFilter !== "all") items = items.filter((o) => o.source === state.sourceFilter)
   if (state.statusFilter === "open")
-    items = items.filter((o) => o.stage !== "closed-won" && o.stage !== "closed-lost")
-  else if (state.statusFilter === "won") items = items.filter((o) => o.stage === "closed-won")
-  else if (state.statusFilter === "lost") items = items.filter((o) => o.stage === "closed-lost")
+    items = items.filter((o) => o.stage !== "hired" && o.stage !== "rejected")
+  else if (state.statusFilter === "won") items = items.filter((o) => o.stage === "hired")
+  else if (state.statusFilter === "lost") items = items.filter((o) => o.stage === "rejected")
 
   const dir = state.sortDir === "asc" ? 1 : -1
   items = [...items].sort((a, b) => {

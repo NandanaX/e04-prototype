@@ -17,7 +17,7 @@ export function PageHeader() {
       pushToast("info", s.exportEmpty)
       return
     }
-    downloadCsv("opportunities.csv", opportunitiesToCsv(visible))
+    downloadCsv("candidates.csv", opportunitiesToCsv(visible))
   }
 
   return (

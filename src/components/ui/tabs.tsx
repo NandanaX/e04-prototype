@@ -32,7 +32,7 @@ const tabsListVariants = cva(
         default: "bg-muted",
         line: "gap-1 bg-transparent",
         /** OSOS "Tabs Main Component" — a white pill-segmented switcher. */
-        pill: "gap-0.5 border border-border bg-card p-1",
+        pill: "gap-0.5 bg-card p-1",
       },
     },
     defaultVariants: {

@@ -119,7 +119,7 @@ export function SelectionBar() {
           className="gap-1.5"
           onClick={() =>
             downloadCsv(
-              "opportunities-selected.csv",
+              "candidates-selected.csv",
               opportunitiesToCsv(opportunities.filter((o) => selectedIds.includes(o.id)))
             )
           }

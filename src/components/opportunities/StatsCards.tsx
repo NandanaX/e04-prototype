@@ -32,8 +32,8 @@ export function StatsCards() {
   const s = t(language)
 
   const total = opportunities.length
-  const won = opportunities.filter((o) => o.stage === "closed-won").length
-  const lost = opportunities.filter((o) => o.stage === "closed-lost").length
+  const won = opportunities.filter((o) => o.stage === "hired").length
+  const lost = opportunities.filter((o) => o.stage === "rejected").length
   const open = total - won - lost
 
   return (

@@ -18,7 +18,7 @@ export function PriorityBadge({ priority, language }: { priority: Priority; lang
 
 export function StageBadge({ stage, language }: { stage: StageDef; language: Language }) {
   const className = stage.closed
-    ? stage.id === "closed-won"
+    ? stage.id === "hired"
       ? "bg-success/10 text-success"
       : "bg-destructive/10 text-destructive"
     : "bg-info/10 text-info"

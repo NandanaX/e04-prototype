@@ -2,14 +2,14 @@ import type { Opportunity } from "@/data/types"
 import { STAGE_MAP } from "@/data/types"
 
 const COLUMNS: { header: string; get: (o: Opportunity) => string | number }[] = [
-  { header: "Opportunity", get: (o) => o.name },
-  { header: "Account", get: (o) => o.account },
-  { header: "Owner", get: (o) => o.owner },
+  { header: "Candidate", get: (o) => o.name },
+  { header: "Position", get: (o) => o.account },
+  { header: "Recruiter", get: (o) => o.owner },
   { header: "Priority", get: (o) => o.priority },
   { header: "Stage", get: (o) => STAGE_MAP[o.stage].label },
-  { header: "Value", get: (o) => o.amount },
-  { header: "Probability", get: (o) => o.probability },
-  { header: "Close Date", get: (o) => o.closeDate },
+  { header: "Expected Salary", get: (o) => o.amount },
+  { header: "Likelihood", get: (o) => o.probability },
+  { header: "Expected Start Date", get: (o) => o.closeDate },
 ]
 
 function csvCell(value: string | number) {

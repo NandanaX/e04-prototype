@@ -14,20 +14,33 @@ const rand = mulberry32(20260908)
 const pick = <T,>(arr: T[]) => arr[Math.floor(rand() * arr.length)]
 const int = (min: number, max: number) => Math.floor(min + rand() * (max - min + 1))
 
-const ACCOUNTS = [
-  "Meridian Logistics", "Al Fahad Holdings", "Crestpoint Retail Group", "Northgate Manufacturing",
-  "Sundara Textiles", "Oryx Energy Services", "BluePeak Software", "Falcon Bay Shipping",
-  "Rivermark Insurance", "Silverline Hospitality", "Ashford Capital Partners", "Cedarwood Health Systems",
-  "Talisman Media Group", "Harborview Construction", "Nexora Telecom", "Golden Dune Real Estate",
-  "Pinnacle Foods Co.", "Zephyr Airlines", "Cobalt Data Systems", "Marlow & Finch Legal",
-  "Coral Reef Resorts", "Ironclad Security", "Vantage Point Consulting", "Lumen Analytics",
+const POSITIONS = [
+  "Senior Backend Engineer", "Product Manager", "UX Designer", "Data Analyst", "DevOps Engineer",
+  "Customer Success Manager", "Sales Development Representative", "Marketing Specialist", "QA Engineer",
+  "Frontend Developer", "HR Business Partner", "Financial Analyst", "Operations Manager",
+  "Technical Support Specialist", "Business Development Manager", "Content Strategist",
+  "Solutions Architect", "Mobile Engineer (iOS)", "Mobile Engineer (Android)", "Security Engineer",
+  "Data Scientist", "Executive Assistant", "Legal Counsel", "Supply Chain Analyst",
 ]
 
-const CONTACTS = [
+const CANDIDATE_NAMES = [
   "Amal Hassan", "David Okoro", "Priya Nair", "Yusuf Al-Sayed", "Hana Kobayashi", "Liam Fitzgerald",
   "Fatima Al-Zahra", "Marco Rossi", "Aisha Rahman", "Tom Whitfield", "Noor Abdullah", "Elena Petrova",
   "Rashid Al-Mansoori", "Grace Chen", "Samir Iqbal", "Olivia Bennett",
 ]
+
+/** A stable, plausible email derived from the candidate's name — not a real address. */
+function emailFor(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z\s-]/g, "")
+    .trim()
+    .split(/\s+/)
+    .join(".")
+  return `${slug}@candidatemail.com`
+}
 
 // Real headshot photos from pravatar.cc (a public placeholder-avatar service — not
 // real OSOS employees) — the `u=` seed just makes each owner's photo stable across
@@ -51,17 +64,18 @@ export function avatarForOwnerName(name: string): string {
   return OWNER_BY_NAME.get(name)?.avatar ?? avatarFor(name)
 }
 
-const SOURCES: Source[] = ["referral", "inbound", "outbound", "partner"]
+const SOURCES: Source[] = ["referral", "job-board", "agency", "linkedin"]
 const PRIORITIES: Priority[] = ["low", "medium", "high"]
 
 const NEXT_STEPS = [
-  "Send updated pricing", "Schedule technical demo", "Follow up after trial", "Confirm procurement timeline",
-  "Loop in legal for redlines", "Await signed PO", "Re-engage after budget cycle", "Share case study",
-  "Book executive sponsor call", "Confirm implementation start date",
+  "Schedule technical interview", "Send take-home assignment", "Conduct reference check",
+  "Schedule panel interview", "Prepare offer letter", "Await candidate decision",
+  "Schedule culture-fit interview", "Confirm salary expectations", "Run background check",
+  "Schedule onboarding call",
 ]
 
-const LOST_REASONS = [
-  "Went with incumbent vendor", "Budget frozen this cycle", "Chose lower-cost competitor", "Project shelved internally",
+const REJECTION_REASONS = [
+  "Accepted another offer", "Compensation mismatch", "Failed technical assessment", "Position put on hold",
 ]
 
 function daysFromNow(days: number) {
@@ -73,35 +87,35 @@ function daysFromNow(days: number) {
 // Realistic, uneven distribution across the pipeline — heavier at the top,
 // thinning out toward close, matching the shape referenced in the module brief.
 const STAGE_COUNTS: Record<Stage, number> = {
-  prospecting: 13,
-  qualification: 10,
-  "needs-analysis": 8,
-  proposal: 7,
-  negotiation: 5,
-  "closed-won": 4,
-  "closed-lost": 3,
+  applied: 13,
+  screening: 10,
+  "interview-scheduled": 8,
+  "interview-completed": 7,
+  "offer-extended": 5,
+  hired: 4,
+  rejected: 3,
 }
 
 let idCounter = 1
 function makeOpportunity(stage: Stage): Opportunity {
-  const account = pick(ACCOUNTS)
+  const candidate = pick(CANDIDATE_NAMES)
   const owner = pick(OWNERS)
-  const isClosed = stage === "closed-won" || stage === "closed-lost"
+  const isClosed = stage === "hired" || stage === "rejected"
   const probabilityByStage: Record<Stage, number> = {
-    prospecting: 10,
-    qualification: 25,
-    "needs-analysis": 40,
-    proposal: 60,
-    negotiation: 80,
-    "closed-won": 100,
-    "closed-lost": 0,
+    applied: 10,
+    screening: 25,
+    "interview-scheduled": 40,
+    "interview-completed": 60,
+    "offer-extended": 80,
+    hired: 100,
+    rejected: 0,
   }
-  const id = `OPP-${String(idCounter++).padStart(4, "0")}`
+  const id = `CAND-${String(idCounter++).padStart(4, "0")}`
   return {
     id,
-    name: `${account} – ${pick(["Platform renewal", "New deployment", "Expansion", "Pilot rollout", "Annual contract", "Multi-site rollout"])}`,
-    account,
-    contact: pick(CONTACTS),
+    name: candidate,
+    account: pick(POSITIONS),
+    contact: emailFor(candidate),
     owner: owner.name,
     ownerInitials: owner.initials,
     ownerAvatar: owner.avatar,
@@ -114,7 +128,7 @@ function makeOpportunity(stage: Stage): Opportunity {
     source: pick(SOURCES),
     priority: pick(PRIORITIES),
     nextStep: isClosed ? "—" : pick(NEXT_STEPS),
-    lostReason: stage === "closed-lost" ? pick(LOST_REASONS) : undefined,
+    lostReason: stage === "rejected" ? pick(REJECTION_REASONS) : undefined,
     // Deterministic ~1-in-9 split so permission-denied paths are reachable in the demo.
     restricted: idCounter % 9 === 0,
   }
@@ -125,3 +139,4 @@ export const OPPORTUNITIES: Opportunity[] = (Object.entries(STAGE_COUNTS) as [St
 )
 
 export const OWNER_NAMES = OWNERS.map((o) => o.name).sort()
+export const POSITION_NAMES = [...POSITIONS].sort()

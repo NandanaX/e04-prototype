@@ -1,11 +1,11 @@
 export type Stage =
-  | "prospecting"
-  | "qualification"
-  | "needs-analysis"
-  | "proposal"
-  | "negotiation"
-  | "closed-won"
-  | "closed-lost"
+  | "applied"
+  | "screening"
+  | "interview-scheduled"
+  | "interview-completed"
+  | "offer-extended"
+  | "hired"
+  | "rejected"
 
 export interface StageDef {
   id: Stage
@@ -15,8 +15,22 @@ export interface StageDef {
   closed?: boolean
 }
 
-export type Source = "referral" | "inbound" | "outbound" | "partner"
+export type Source = "referral" | "job-board" | "agency" | "linkedin"
 export type Priority = "low" | "medium" | "high"
+
+export interface EducationDetails {
+  degree: string
+  fieldOfStudy: string
+  institution: string
+  graduationYear: string
+}
+
+export interface CareerDetails {
+  currentEmployer: string
+  currentTitle: string
+  yearsOfExperience: string
+  noticePeriod: string
+}
 
 export interface Opportunity {
   id: string
@@ -38,16 +52,19 @@ export interface Opportunity {
   lostReason?: string
   /** Demo permission flag — the current mock user cannot edit/move/delete this record. */
   restricted?: boolean
+  /** Filled in on the candidate profile page — absent until the recruiter adds it. */
+  education?: EducationDetails
+  career?: CareerDetails
 }
 
 export const STAGES: StageDef[] = [
-  { id: "prospecting", label: "Prospecting", labelAr: "استكشاف" },
-  { id: "qualification", label: "Qualification", labelAr: "التأهيل" },
-  { id: "needs-analysis", label: "Needs Analysis", labelAr: "تحليل الاحتياجات" },
-  { id: "proposal", label: "Proposal / Quote Sent", labelAr: "تم إرسال العرض" },
-  { id: "negotiation", label: "Negotiation", labelAr: "التفاوض" },
-  { id: "closed-won", label: "Closed – Won", labelAr: "مغلق – فوز", closed: true },
-  { id: "closed-lost", label: "Closed – Lost", labelAr: "مغلق – خسارة", closed: true },
+  { id: "applied", label: "Applied", labelAr: "تم التقديم" },
+  { id: "screening", label: "Screening", labelAr: "الفرز" },
+  { id: "interview-scheduled", label: "Interview Scheduled", labelAr: "مقابلة مجدولة" },
+  { id: "interview-completed", label: "Interview Completed", labelAr: "اكتملت المقابلة" },
+  { id: "offer-extended", label: "Offer Extended", labelAr: "تم تقديم العرض" },
+  { id: "hired", label: "Hired", labelAr: "تم التوظيف", closed: true },
+  { id: "rejected", label: "Rejected", labelAr: "مرفوض", closed: true },
 ]
 
 export const STAGE_MAP: Record<Stage, StageDef> = Object.fromEntries(

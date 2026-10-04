@@ -16,7 +16,7 @@ import { t } from "@/lib/i18n"
 export function StageMoveMenu({ opp, language }: { opp: Opportunity; language: Language }) {
   const attemptMoveStage = useOpportunitiesStore((s) => s.attemptMoveStage)
   const s = t(language)
-  const isClosed = opp.stage === "closed-won" || opp.stage === "closed-lost"
+  const isClosed = opp.stage === "hired" || opp.stage === "rejected"
   const disabled = isClosed || !canEditOpportunity(opp)
 
   return (

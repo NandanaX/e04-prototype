@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetBody,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { STAGES, type Priority, type Stage } from "@/data/types"
-import { OWNER_NAMES, avatarForOwnerName } from "@/data/opportunities"
+import { OWNER_NAMES, POSITION_NAMES, avatarForOwnerName } from "@/data/opportunities"
 import { t } from "@/lib/i18n"
 import { useOpportunitiesStore, type NewOpportunityInput } from "@/store/opportunities-store"
 
@@ -43,7 +44,7 @@ interface FormValues {
 const EMPTY: FormValues = {
   name: "",
   account: "",
-  stage: "prospecting",
+  stage: "applied",
   priority: "medium",
   amount: "",
   probability: "",
@@ -52,8 +53,15 @@ const EMPTY: FormValues = {
 }
 
 export function OpportunityForm() {
-  const { formState, closeForm, createOpportunity, updateOpportunity, opportunities, language } =
-    useOpportunitiesStore()
+  const {
+    formState,
+    closeForm,
+    createOpportunity,
+    updateOpportunity,
+    openCandidateProfile,
+    opportunities,
+    language,
+  } = useOpportunitiesStore()
   const s = t(language)
   const isOpen = !!formState
   const isEdit = formState?.mode === "edit"
@@ -61,6 +69,7 @@ export function OpportunityForm() {
   const [values, setValues] = useState<FormValues>(EMPTY)
   const [errors, setErrors] = useState<Partial<Record<keyof FormValues, string>>>({})
   const [submitting, setSubmitting] = useState(false)
+  const nameInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!formState) return
@@ -79,7 +88,7 @@ export function OpportunityForm() {
         })
       }
     } else {
-      setValues({ ...EMPTY, stage: formState.prefillStage ?? "prospecting" })
+      setValues({ ...EMPTY, stage: formState.prefillStage ?? "applied" })
     }
     setErrors({})
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +112,7 @@ export function OpportunityForm() {
     return Object.keys(next).length === 0
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(addNew = false) {
     if (!validate()) return
     const input: NewOpportunityInput = {
       name: values.name.trim(),
@@ -122,37 +131,60 @@ export function OpportunityForm() {
       closeForm()
       return
     }
-    const ok = await createOpportunity(input)
+    const newId = await createOpportunity(input)
     setSubmitting(false)
-    if (ok) closeForm()
+    if (!newId) return
+    if (addNew) {
+      const prefillStage = formState?.mode === "create" ? formState.prefillStage : undefined
+      setValues({ ...EMPTY, stage: prefillStage ?? "applied" })
+      setErrors({})
+      nameInputRef.current?.focus()
+    } else {
+      // "Save and Continue" hands off to the full profile page — Basic Details
+      // (just saved), Educational Details, and Career Details, each its own form.
+      closeForm()
+      openCandidateProfile(newId)
+    }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && closeForm()}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{isEdit ? s.editOpportunityTitle : s.addOpportunity}</DialogTitle>
-          <DialogDescription>
+    <Sheet open={isOpen} onOpenChange={(open) => !open && closeForm()}>
+      <SheetContent className="sm:max-w-lg">
+        <SheetHeader>
+          <SheetTitle>{isEdit ? s.editOpportunityTitle : s.addOpportunity}</SheetTitle>
+          <SheetDescription>
             {formState?.mode === "create" && formState.prefillStage
               ? `${s.stage}: ${STAGES.find((st) => st.id === formState.prefillStage)?.[language === "ar" ? "labelAr" : "label"]}`
               : null}
-          </DialogDescription>
-        </DialogHeader>
+          </SheetDescription>
+        </SheetHeader>
 
-        <div className="grid gap-3">
+        <SheetBody className="flex flex-col gap-3">
           <div className="grid gap-1.5">
             <Label htmlFor="opp-name">{s.name}</Label>
-            <Input id="opp-name" value={values.name} onChange={(e) => set("name", e.target.value)} />
+            <Input
+              id="opp-name"
+              ref={nameInputRef}
+              value={values.name}
+              onChange={(e) => set("name", e.target.value)}
+            />
             {errors.name && <p className="text-2xs text-destructive">{errors.name}</p>}
           </div>
 
           <div className="grid gap-1.5">
             <Label htmlFor="opp-account">{s.account}</Label>
-            <Input
-              id="opp-account"
-              value={values.account}
-              onChange={(e) => set("account", e.target.value)}
-            />
+            <Select value={values.account} onValueChange={(v) => set("account", v)}>
+              <SelectTrigger id="opp-account" className="w-full" aria-invalid={!!errors.account}>
+                <SelectValue placeholder={s.account} />
+              </SelectTrigger>
+              <SelectContent>
+                {POSITION_NAMES.map((position) => (
+                  <SelectItem key={position} value={position}>
+                    {position}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {errors.account && <p className="text-2xs text-destructive">{errors.account}</p>}
           </div>
 
@@ -268,17 +300,24 @@ export function OpportunityForm() {
               </Select>
             </div>
           </div>
-        </div>
+        </SheetBody>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={closeForm} disabled={submitting}>
+        <SheetFooter className="justify-between">
+          <Button variant="ghost" onClick={closeForm} disabled={submitting}>
             {s.cancel}
           </Button>
-          <Button onClick={handleSubmit} disabled={submitting}>
-            {submitting ? (isEdit ? s.saving : s.creating) : isEdit ? s.save : s.create}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <div className="flex items-center gap-2">
+            {!isEdit && (
+              <Button variant="outline" onClick={() => handleSubmit(true)} disabled={submitting}>
+                {submitting ? s.creating : s.saveAndAddNew}
+              </Button>
+            )}
+            <Button onClick={() => handleSubmit(false)} disabled={submitting}>
+              {submitting ? (isEdit ? s.saving : s.creating) : isEdit ? s.save : s.saveAndContinue}
+            </Button>
+          </div>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   )
 }

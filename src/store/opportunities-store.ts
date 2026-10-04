@@ -83,6 +83,8 @@ interface OpportunitiesState {
   formState: FormState | null
   /** Set after "Save and Continue" on a new candidate — renders the full profile page instead of the list. */
   profileCandidateId: string | null
+  /** UI-only preference: hides the four stat cards to give the table more vertical space. */
+  statsCollapsed: boolean
   deleteConfirm: DeleteConfirm | null
   toasts: Toast[]
   bulkResult: BulkResult | null
@@ -90,6 +92,7 @@ interface OpportunitiesState {
   pendingLostConfirmation: PendingLostConfirmation | null
 
   setView: (v: ViewMode) => void
+  toggleStatsCollapsed: () => void
   setLanguage: (l: Language) => void
   setSearch: (s: string) => void
   setOwnerFilter: (o: string | "all") => void
@@ -399,6 +402,7 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
   openDrawerId: null,
   formState: null,
   profileCandidateId: null,
+  statsCollapsed: false,
   deleteConfirm: null,
   toasts: [],
   bulkResult: null,
@@ -406,6 +410,7 @@ export const useOpportunitiesStore = create<OpportunitiesState>((set, get) => ({
   pendingLostConfirmation: null,
 
   setView: (v) => set({ view: v }),
+  toggleStatsCollapsed: () => set((state) => ({ statsCollapsed: !state.statsCollapsed })),
   setLanguage: (l) => set({ language: l }),
   setSearch: (s) => set({ search: s, page: 1 }),
   setOwnerFilter: (o) => set({ ownerFilter: o, page: 1 }),

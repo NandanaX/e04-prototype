@@ -49,7 +49,7 @@ export function RowActionsMenu({
   size?: "icon-xs" | "icon-sm"
 }) {
   const s = t(language)
-  const { openDrawer, openEditForm, duplicateOpportunity, updateOwner, updatePriority, requestDelete } =
+  const { openCandidateProfile, duplicateOpportunity, updateOwner, updatePriority, requestDelete } =
     useOpportunitiesStore()
   const editable = canEditOpportunity(opp)
   const iconSize = size === "icon-xs" ? "size-3.5" : "size-4"
@@ -67,10 +67,10 @@ export function RowActionsMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" onClick={stop}>
-          <DropdownMenuItem disabled={!editable} onSelect={() => openEditForm(opp.id)}>
+          <DropdownMenuItem disabled={!editable} onSelect={() => openCandidateProfile(opp.id)}>
             <Pencil /> {s.edit}
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => openDrawer(opp.id)}>
+          <DropdownMenuItem onSelect={() => openCandidateProfile(opp.id)}>
             <Eye /> {s.view}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => duplicateOpportunity(opp.id)}>
@@ -150,7 +150,7 @@ export function RowActionsMenu({
         title={editable ? s.edit : s.permissionDenied(s.actionEditVerb)}
         disabled={!editable}
         className="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-        onClick={() => openEditForm(opp.id)}
+        onClick={() => openCandidateProfile(opp.id)}
       >
         <Pencil className={iconSize} />
       </Button>
@@ -175,8 +175,7 @@ export function RowContextMenu({
 }) {
   const s = t(language)
   const {
-    openDrawer,
-    openEditForm,
+    openCandidateProfile,
     duplicateOpportunity,
     updateOwner,
     updatePriority,
@@ -190,10 +189,10 @@ export function RowContextMenu({
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent className="w-48">
-        <ContextMenuItem onSelect={() => openDrawer(opp.id)}>
+        <ContextMenuItem onSelect={() => openCandidateProfile(opp.id)}>
           <Eye /> {s.view}
         </ContextMenuItem>
-        <ContextMenuItem disabled={!editable} onSelect={() => openEditForm(opp.id)}>
+        <ContextMenuItem disabled={!editable} onSelect={() => openCandidateProfile(opp.id)}>
           <Pencil /> {s.edit}
         </ContextMenuItem>
         <ContextMenuItem onSelect={() => duplicateOpportunity(opp.id)}>

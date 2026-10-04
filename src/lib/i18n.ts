@@ -61,6 +61,8 @@ export const STRINGS = {
     tabAll: "All",
     addOpportunity: "Add Candidate",
     exportBtn: "Export",
+    collapseStats: "Collapse summary cards",
+    expandStats: "Expand summary cards",
     notifications: "Notifications",
     allOpportunitiesTitle: "All Candidates",
 
@@ -226,6 +228,8 @@ export const STRINGS = {
     tabAll: "الكل",
     addOpportunity: "إضافة مرشح",
     exportBtn: "تصدير",
+    collapseStats: "طي بطاقات الملخص",
+    expandStats: "إظهار بطاقات الملخص",
     notifications: "الإشعارات",
     allOpportunitiesTitle: "كل المرشحين",
 

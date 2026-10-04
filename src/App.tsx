@@ -27,8 +27,17 @@ import { syncUrlFromState, useOpportunitiesStore } from "@/store/opportunities-s
 const INITIAL_LOAD_MS = 450
 
 function App() {
-  const { view, language, statusFilter, ownerFilter, priorityFilter, sortField, sortDir, profileCandidateId } =
-    useOpportunitiesStore()
+  const {
+    view,
+    language,
+    statusFilter,
+    ownerFilter,
+    priorityFilter,
+    sortField,
+    sortDir,
+    profileCandidateId,
+    statsCollapsed,
+  } = useOpportunitiesStore()
   const [initialLoading, setInitialLoading] = useState(true)
 
   // Framework rule: the working context (view + status tab + filters + sort)
@@ -63,8 +72,13 @@ function App() {
             <div className="animate-fade-up">
               <PageHeader />
             </div>
-            <div className="animate-fade-up" style={{ animationDelay: "40ms" }}>
-              <StatsCards />
+            <div
+              className="grid animate-fade-up transition-[grid-template-rows] duration-200 ease-out"
+              style={{ animationDelay: "40ms", gridTemplateRows: statsCollapsed ? "0fr" : "1fr" }}
+            >
+              <div className="overflow-hidden">
+                <StatsCards />
+              </div>
             </div>
 
             <div className="flex flex-1 flex-col overflow-hidden p-6 pt-4">

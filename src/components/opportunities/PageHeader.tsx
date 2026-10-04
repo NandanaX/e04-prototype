@@ -1,12 +1,13 @@
-import { Download, Plus } from "lucide-react"
+import { ChevronsDownUp, ChevronsUpDown, Download, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { downloadCsv, opportunitiesToCsv } from "@/lib/csv"
 import { t } from "@/lib/i18n"
 import { selectVisibleOpportunities, useOpportunitiesStore } from "@/store/opportunities-store"
 
 export function PageHeader() {
   const state = useOpportunitiesStore()
-  const { language, openCreateForm, pushToast } = state
+  const { language, openCreateForm, pushToast, statsCollapsed, toggleStatsCollapsed } = state
   const s = t(language)
   // "Results" always reflects the active search/filter/tab — the StatsCards row
   // above is the one place that intentionally always shows org-wide totals.
@@ -31,10 +32,38 @@ export function PageHeader() {
         </p>
       </div>
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" className="gap-1.5" onClick={handleExport}>
-          <Download className="size-3.5" />
-          {s.exportBtn}
-        </Button>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label={statsCollapsed ? s.expandStats : s.collapseStats}
+                onClick={toggleStatsCollapsed}
+              >
+                {statsCollapsed ? (
+                  <ChevronsUpDown className="size-3.5" />
+                ) : (
+                  <ChevronsDownUp className="size-3.5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{statsCollapsed ? s.expandStats : s.collapseStats}</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label={s.exportBtn}
+                onClick={handleExport}
+              >
+                <Download className="size-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{s.exportBtn}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <Button size="sm" className="gap-1.5" onClick={() => openCreateForm()}>
           <Plus className="size-3.5" />
           {s.addOpportunity}

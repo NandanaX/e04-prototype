@@ -45,7 +45,7 @@ import {
   type SortField,
 } from "@/store/opportunities-store"
 import { PriorityBadge, StageBadge } from "./badges"
-import { RowActionsMenu } from "./RowActionsMenu"
+import { RowActionsMenu, RowContextMenu } from "./RowActionsMenu"
 import { OpportunitiesEmptyState } from "./EmptyState"
 
 const PRIORITY_LABEL: Record<Priority, { en: string; ar: string }> = {
@@ -102,6 +102,7 @@ function Row({ o, language }: { o: Opportunity; language: Language }) {
   })
 
   return (
+    <RowContextMenu opp={o} language={language}>
     <TableRow
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -236,6 +237,7 @@ function Row({ o, language }: { o: Opportunity; language: Language }) {
         <RowActionsMenu opp={o} language={language} />
       </TableCell>
     </TableRow>
+    </RowContextMenu>
   )
 }
 

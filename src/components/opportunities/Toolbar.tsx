@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { LayoutGrid, List, Search, Columns3, Languages, X, ArrowUpDown } from "lucide-react"
+import { LayoutGrid, List, Search, Columns3, Rows3, Languages, X, ArrowUpDown } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -179,6 +179,10 @@ export function Toolbar() {
               <TabsTrigger value="kanban" aria-label={s.kanbanView} className="gap-1.5">
                 <Columns3 className="size-4" />
                 <span className="hidden md:inline">{s.kanbanView}</span>
+              </TabsTrigger>
+              <TabsTrigger value="stack" aria-label={s.stackView} className="gap-1.5">
+                <Rows3 className="size-4" />
+                <span className="hidden md:inline">{s.stackView}</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>

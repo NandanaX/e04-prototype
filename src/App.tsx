@@ -8,6 +8,7 @@ import { SelectionBar } from "@/components/opportunities/SelectionBar"
 import { ListView } from "@/components/opportunities/ListView"
 import { CardView } from "@/components/opportunities/CardView"
 import { KanbanView } from "@/components/opportunities/KanbanView"
+import { StackView } from "@/components/opportunities/StackView"
 import { ListSkeleton } from "@/components/opportunities/ListSkeleton"
 import { CardSkeleton } from "@/components/opportunities/CardSkeleton"
 import { KanbanSkeleton } from "@/components/opportunities/KanbanSkeleton"
@@ -79,12 +80,14 @@ function App() {
                       {view === "list" && <ListSkeleton />}
                       {view === "card" && <CardSkeleton />}
                       {view === "kanban" && <KanbanSkeleton />}
+                      {view === "stack" && <CardSkeleton />}
                     </>
                   ) : (
                     <>
                       {view === "list" && <ListView />}
                       {view === "card" && <CardView />}
                       {view === "kanban" && <KanbanView />}
+                      {view === "stack" && <StackView />}
                     </>
                   )}
                 </main>

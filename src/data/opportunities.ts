@@ -64,6 +64,12 @@ export function avatarForOwnerName(name: string): string {
   return OWNER_BY_NAME.get(name)?.avatar ?? avatarFor(name)
 }
 
+/** A stable headshot for a candidate, seeded by their record id (not their name,
+ *  since several mock candidates share the same name but should still look distinct). */
+export function avatarForCandidateId(id: string): string {
+  return avatarFor(id)
+}
+
 const SOURCES: Source[] = ["referral", "job-board", "agency", "linkedin"]
 const PRIORITIES: Priority[] = ["low", "medium", "high"]
 

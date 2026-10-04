@@ -4,7 +4,7 @@ import { STAGES, STAGE_MAP, type Opportunity, type Priority, type Source, type S
 import { t } from "@/lib/i18n"
 import { simulateWrite } from "@/lib/mockApi"
 
-export type ViewMode = "list" | "card" | "kanban"
+export type ViewMode = "list" | "card" | "kanban" | "stack"
 export type SortField =
   | "name"
   | "account"
@@ -150,7 +150,7 @@ type GetFn = StoreApi<OpportunitiesState>["getState"]
 
 const STAGE_ORDER = STAGES.map((s) => s.id)
 
-const VALID_VIEWS: ViewMode[] = ["list", "card", "kanban"]
+const VALID_VIEWS: ViewMode[] = ["list", "card", "kanban", "stack"]
 const VALID_STATUS: StatusFilter[] = ["all", "open", "won", "lost"]
 const VALID_SORT_FIELDS: SortField[] = [
   "name",

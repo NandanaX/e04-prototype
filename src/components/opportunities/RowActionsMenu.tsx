@@ -60,28 +60,6 @@ export function RowActionsMenu({
 
   return (
     <div className="flex items-center" onClick={stop} onPointerDown={stop}>
-      <Button
-        variant="ghost"
-        size={size}
-        aria-label={`${s.edit} — ${opp.name}`}
-        title={editable ? s.edit : s.permissionDenied(s.actionEditVerb)}
-        disabled={!editable}
-        onClick={() => openEditForm(opp.id)}
-      >
-        <Pencil className={iconSize} />
-      </Button>
-      <Button
-        variant="ghost"
-        size={size}
-        aria-label={`${s.deleteAction} — ${opp.name}`}
-        title={editable ? s.deleteAction : s.permissionDenied(s.actionDeleteVerb)}
-        disabled={!editable}
-        className="hover:bg-destructive/10 hover:text-destructive"
-        onClick={() => requestDelete([opp.id])}
-      >
-        <Trash2 className={iconSize} />
-      </Button>
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size={size} aria-label={s.moreActionsFor(opp.name)}>
@@ -89,6 +67,9 @@ export function RowActionsMenu({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" onClick={stop}>
+          <DropdownMenuItem disabled={!editable} onSelect={() => openEditForm(opp.id)}>
+            <Pencil /> {s.edit}
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openDrawer(opp.id)}>
             <Eye /> {s.view}
           </DropdownMenuItem>
@@ -149,8 +130,30 @@ export function RowActionsMenu({
           <DropdownMenuItem onSelect={() => downloadCsv(`${opp.id}.csv`, opportunitiesToCsv([opp]))}>
             <Download /> {s.exportBtn}
           </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            variant="destructive"
+            disabled={!editable}
+            onSelect={() => requestDelete([opp.id])}
+          >
+            <Trash2 /> {s.deleteAction}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Button
+        variant="ghost"
+        size={size}
+        aria-label={`${s.edit} — ${opp.name}`}
+        title={editable ? s.edit : s.permissionDenied(s.actionEditVerb)}
+        disabled={!editable}
+        className="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+        onClick={() => openEditForm(opp.id)}
+      >
+        <Pencil className={iconSize} />
+      </Button>
     </div>
   )
 }

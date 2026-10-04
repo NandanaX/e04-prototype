@@ -61,28 +61,6 @@ export function Toolbar() {
     <div className="flex flex-col gap-3 border-b border-border bg-card px-6 py-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
-          {/* View switcher — OSOS "Tabs Main Component" pill pattern (same as the
-              status tabs above), always visible; current view is not lost on
-              refresh (see App.tsx URL sync). */}
-          <Tabs value={state.view} onValueChange={(v) => state.setView(v as ViewMode)} className="shrink-0">
-            <TabsList variant="pill" className="h-auto">
-              <TabsTrigger value="list" aria-label={s.listView} className="gap-1.5">
-                <List className="size-4" />
-                <span className="hidden md:inline">{s.listView}</span>
-              </TabsTrigger>
-              <TabsTrigger value="card" aria-label={s.cardView} className="gap-1.5">
-                <LayoutGrid className="size-4" />
-                <span className="hidden md:inline">{s.cardView}</span>
-              </TabsTrigger>
-              <TabsTrigger value="kanban" aria-label={s.kanbanView} className="gap-1.5">
-                <Columns3 className="size-4" />
-                <span className="hidden md:inline">{s.kanbanView}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          <Separator orientation="vertical" className="hidden h-6 sm:block" />
-
           <div className="relative">
             <Search className="pointer-events-none absolute start-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -184,15 +162,39 @@ export function Toolbar() {
           </Select>
         </div>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="shrink-0 gap-1.5"
-          onClick={() => state.setLanguage(state.language === "en" ? "ar" : "en")}
-        >
-          <Languages className="size-4" />
-          {s.language}
-        </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          {/* View switcher — OSOS "Tabs Main Component" pill pattern — sits right
+              before the language toggle; current view is not lost on refresh
+              (see App.tsx URL sync). */}
+          <Tabs value={state.view} onValueChange={(v) => state.setView(v as ViewMode)} className="shrink-0">
+            <TabsList variant="pill" className="h-auto">
+              <TabsTrigger value="list" aria-label={s.listView} className="gap-1.5">
+                <List className="size-4" />
+                <span className="hidden md:inline">{s.listView}</span>
+              </TabsTrigger>
+              <TabsTrigger value="card" aria-label={s.cardView} className="gap-1.5">
+                <LayoutGrid className="size-4" />
+                <span className="hidden md:inline">{s.cardView}</span>
+              </TabsTrigger>
+              <TabsTrigger value="kanban" aria-label={s.kanbanView} className="gap-1.5">
+                <Columns3 className="size-4" />
+                <span className="hidden md:inline">{s.kanbanView}</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <Separator orientation="vertical" className="hidden h-6 sm:block" />
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="shrink-0 gap-1.5"
+            onClick={() => state.setLanguage(state.language === "en" ? "ar" : "en")}
+          >
+            <Languages className="size-4" />
+            {s.language}
+          </Button>
+        </div>
       </div>
 
       {hasFilters && (

@@ -109,11 +109,11 @@ function Row({ o, language }: { o: Opportunity; language: Language }) {
       data-state={selected ? "selected" : undefined}
       tabIndex={0}
       className={isDragging ? "relative z-10 opacity-60" : "group cursor-pointer"}
-      onClick={() => state.openDrawer(o.id)}
+      onClick={() => state.openCandidateProfile(o.id)}
       onKeyDown={(e) => {
         if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
           e.preventDefault()
-          state.openDrawer(o.id)
+          state.openCandidateProfile(o.id)
         }
       }}
     >
@@ -134,6 +134,9 @@ function Row({ o, language }: { o: Opportunity; language: Language }) {
           onCheckedChange={() => state.toggleSelect(o.id)}
           aria-label={`Select ${o.name}`}
         />
+      </TableCell>
+      <TableCell onClick={stopRowClick}>
+        <RowActionsMenu opp={o} language={language} />
       </TableCell>
       <TableCell className="text-muted-foreground tabular-nums">{o.id}</TableCell>
       <TableCell className="max-w-[240px]">
@@ -233,9 +236,6 @@ function Row({ o, language }: { o: Opportunity; language: Language }) {
           </SelectContent>
         </Select>
       </TableCell>
-      <TableCell onClick={stopRowClick}>
-        <RowActionsMenu opp={o} language={language} />
-      </TableCell>
     </TableRow>
     </RowContextMenu>
   )
@@ -298,6 +298,7 @@ export function ListView() {
                   aria-label="Select all"
                 />
               </TableHead>
+              <TableHead className="w-28" />
               <TableHead>{s.opportunityId}</TableHead>
               <TableHead aria-sort={sortAriaFor(state.sortField, state.sortDir, "name")}>
                 <SortHeader field="name">{s.name}</SortHeader>
@@ -324,7 +325,6 @@ export function ListView() {
               <TableHead aria-sort={sortAriaFor(state.sortField, state.sortDir, "owner")}>
                 <SortHeader field="owner">{s.ownerCol}</SortHeader>
               </TableHead>
-              <TableHead className="w-28" />
             </tr>
           </TableHeader>
           <TableBody>

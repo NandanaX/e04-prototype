@@ -17,6 +17,7 @@ export interface StageDef {
 
 export type Source = "referral" | "job-board" | "agency" | "linkedin"
 export type Priority = "low" | "medium" | "high"
+export type CandidateStatus = "active" | "inactive"
 
 export interface EducationDetails {
   degree: string
@@ -55,6 +56,8 @@ export interface Opportunity {
   /** Filled in on the candidate profile page — absent until the recruiter adds it. */
   education?: EducationDetails
   career?: CareerDetails
+  /** Whether the candidate's application is still active; defaults to "active". */
+  status?: CandidateStatus
 }
 
 export const STAGES: StageDef[] = [

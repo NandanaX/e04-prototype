@@ -46,7 +46,7 @@ export function OpportunityCard({
         }
       }}
       className={cn(
-        "gap-3 py-3 outline-none transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-hover active:translate-y-0 active:bg-accent/40 active:shadow-card focus-visible:ring-2 focus-visible:ring-ring",
+        "group gap-3 py-3 outline-none transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-hover active:translate-y-0 active:bg-accent/40 active:shadow-card focus-visible:ring-2 focus-visible:ring-ring",
         selected && "ring-2 ring-ring",
         className
       )}

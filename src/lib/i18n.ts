@@ -126,6 +126,9 @@ export const STRINGS = {
     currentTitle: "Current Title",
     yearsOfExperience: "Years of Experience",
     noticePeriod: "Notice Period",
+    candidateStatus: "Status",
+    statusActive: "Active",
+    statusInactive: "Inactive",
 
     // Form validation
     fieldRequired: "This field is required.",
@@ -281,6 +284,9 @@ export const STRINGS = {
     currentTitle: "المسمى الوظيفي الحالي",
     yearsOfExperience: "سنوات الخبرة",
     noticePeriod: "مهلة الإشعار",
+    candidateStatus: "الحالة",
+    statusActive: "نشط",
+    statusInactive: "غير نشط",
 
     fieldRequired: "هذا الحقل مطلوب.",
     fieldValuePositive: "يجب أن يكون الراتب المتوقع أكبر من 0.",

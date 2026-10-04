@@ -11,9 +11,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { STAGES, type Priority, type Stage, type EducationDetails, type CareerDetails } from "@/data/types"
+import {
+  STAGES,
+  type Priority,
+  type Stage,
+  type EducationDetails,
+  type CareerDetails,
+  type CandidateStatus,
+} from "@/data/types"
 import { OWNER_NAMES, POSITION_NAMES, avatarForOwnerName } from "@/data/opportunities"
 import { t } from "@/lib/i18n"
+import { cn } from "@/lib/utils"
 import { useOpportunitiesStore } from "@/store/opportunities-store"
 
 const PRIORITY_LABEL: Record<Priority, { en: string; ar: string }> = {
@@ -78,6 +86,38 @@ interface BasicFormValues {
   probability: string
   closeDate: string
   owner: string
+  status: CandidateStatus
+}
+
+function StatusToggle({
+  value,
+  onChange,
+  activeLabel,
+  inactiveLabel,
+}: {
+  value: CandidateStatus
+  onChange: (v: CandidateStatus) => void
+  activeLabel: string
+  inactiveLabel: string
+}) {
+  const isActive = value === "active"
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isActive}
+      onClick={() => onChange(isActive ? "inactive" : "active")}
+      className={cn(
+        "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+        isActive
+          ? "bg-success/15 text-success hover:bg-success/20"
+          : "bg-muted text-muted-foreground hover:bg-muted/70"
+      )}
+    >
+      <span className={cn("size-1.5 rounded-full", isActive ? "bg-success" : "bg-muted-foreground/50")} />
+      {isActive ? activeLabel : inactiveLabel}
+    </button>
+  )
 }
 
 export function CandidateProfilePage() {
@@ -102,6 +142,7 @@ export function CandidateProfilePage() {
       probability: String(opp.probability),
       closeDate: opp.closeDate,
       owner: opp.owner,
+      status: opp.status ?? "active",
     })
     setEducation(opp.education ?? EMPTY_EDUCATION)
     setCareer(opp.career ?? EMPTY_CAREER)
@@ -121,6 +162,7 @@ export function CandidateProfilePage() {
       probability: Number(basic.probability) || 0,
       closeDate: basic.closeDate,
       owner: basic.owner,
+      status: basic.status,
       education,
       career,
     })
@@ -129,9 +171,23 @@ export function CandidateProfilePage() {
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-6 animate-fade-up">
-      <Button variant="ghost" size="sm" className="mb-4 gap-1.5" onClick={closeCandidateProfile}>
-        <ArrowLeft className="size-4" /> {s.backToCandidates}
-      </Button>
+      <div className="mb-4 flex items-center justify-between">
+        <Button variant="ghost" size="sm" className="gap-1.5" onClick={closeCandidateProfile}>
+          <ArrowLeft className="size-4" /> {s.backToCandidates}
+        </Button>
+        <div className="flex items-center gap-2">
+          <StatusToggle
+            value={basic.status}
+            onChange={(v) => setBasic({ ...basic, status: v })}
+            activeLabel={s.statusActive}
+            inactiveLabel={s.statusInactive}
+          />
+          <Button variant="outline" onClick={closeCandidateProfile}>
+            {s.cancel}
+          </Button>
+          <Button onClick={saveAll}>{s.save}</Button>
+        </div>
+      </div>
 
       <div className="mb-6 flex items-center gap-3">
         <Avatar size="lg">
@@ -341,13 +397,6 @@ export function CandidateProfilePage() {
             </Select>
           </Field>
         </SectionCard>
-      </div>
-
-      <div className="sticky bottom-0 -mx-6 flex items-center justify-end gap-2 border-t border-border bg-card px-6 py-4">
-        <Button variant="ghost" onClick={closeCandidateProfile}>
-          {s.cancel}
-        </Button>
-        <Button onClick={saveAll}>{s.save}</Button>
       </div>
     </div>
   )

@@ -3,7 +3,6 @@ import { AppSidebar } from "@/components/layout/AppSidebar"
 import { AppHeader } from "@/components/layout/AppHeader"
 import { PageHeader } from "@/components/opportunities/PageHeader"
 import { StatsCards } from "@/components/opportunities/StatsCards"
-import { StatusTabs } from "@/components/opportunities/StatusTabs"
 import { Toolbar } from "@/components/opportunities/Toolbar"
 import { SelectionBar } from "@/components/opportunities/SelectionBar"
 import { ListView } from "@/components/opportunities/ListView"
@@ -72,7 +71,6 @@ function App() {
                 className="relative flex flex-1 flex-col overflow-hidden rounded-lg border border-border bg-card shadow-card animate-fade-up"
                 style={{ animationDelay: "80ms" }}
               >
-                <StatusTabs />
                 <Toolbar />
 
                 <main className="flex flex-1 flex-col overflow-hidden" aria-busy={initialLoading}>

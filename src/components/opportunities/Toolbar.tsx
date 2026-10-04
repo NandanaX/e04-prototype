@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -166,26 +167,44 @@ export function Toolbar() {
           {/* View switcher — OSOS "Tabs Main Component" pill pattern — sits right
               before the language toggle; current view is not lost on refresh
               (see App.tsx URL sync). */}
-          <Tabs value={state.view} onValueChange={(v) => state.setView(v as ViewMode)} className="shrink-0">
-            <TabsList variant="pill" className="h-auto">
-              <TabsTrigger value="list" aria-label={s.listView} className="gap-1.5">
-                <List className="size-4" />
-                <span className="hidden md:inline">{s.listView}</span>
-              </TabsTrigger>
-              <TabsTrigger value="card" aria-label={s.cardView} className="gap-1.5">
-                <LayoutGrid className="size-4" />
-                <span className="hidden md:inline">{s.cardView}</span>
-              </TabsTrigger>
-              <TabsTrigger value="kanban" aria-label={s.kanbanView} className="gap-1.5">
-                <Columns3 className="size-4" />
-                <span className="hidden md:inline">{s.kanbanView}</span>
-              </TabsTrigger>
-              <TabsTrigger value="stack" aria-label={s.stackView} className="gap-1.5">
-                <Rows3 className="size-4" />
-                <span className="hidden md:inline">{s.stackView}</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <TooltipProvider delayDuration={300}>
+            <Tabs value={state.view} onValueChange={(v) => state.setView(v as ViewMode)} className="shrink-0">
+              <TabsList variant="pill" className="h-auto">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="list" aria-label={s.listView}>
+                      <List className="size-4" />
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>{s.listView}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="card" aria-label={s.cardView}>
+                      <LayoutGrid className="size-4" />
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>{s.cardView}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="kanban" aria-label={s.kanbanView}>
+                      <Columns3 className="size-4" />
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>{s.kanbanView}</TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TabsTrigger value="stack" aria-label={s.stackView}>
+                      <Rows3 className="size-4" />
+                    </TabsTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>{s.stackView}</TooltipContent>
+                </Tooltip>
+              </TabsList>
+            </Tabs>
+          </TooltipProvider>
 
           <Separator orientation="vertical" className="hidden h-6 sm:block" />
 

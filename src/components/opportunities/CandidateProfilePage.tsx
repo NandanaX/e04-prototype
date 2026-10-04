@@ -108,10 +108,10 @@ function StatusToggle({
       aria-checked={isActive}
       onClick={() => onChange(isActive ? "inactive" : "active")}
       className={cn(
-        "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+        "flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium shadow-xs transition-colors active:scale-[0.98]",
         isActive
-          ? "bg-success/15 text-success hover:bg-success/20"
-          : "bg-muted text-muted-foreground hover:bg-muted/70"
+          ? "border-success/30 bg-success/10 text-success hover:bg-success/20"
+          : "border-border bg-card text-muted-foreground hover:bg-accent"
       )}
     >
       <span className={cn("size-1.5 rounded-full", isActive ? "bg-success" : "bg-muted-foreground/50")} />
